@@ -9,6 +9,9 @@ add_subdirectory(lib/doctest)
 
 include_directories(${PROJECT_SOURCE_DIR}/src)
 
-add_executable(test test/main_test.cpp test/vector_test.cpp)
+file(GLOB SOURCE_FILES "test/*.cpp")
+
+add_executable(test ${SOURCE_FILES})
 
 target_link_libraries(test PRIVATE doctest)
+

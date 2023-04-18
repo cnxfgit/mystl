@@ -12,7 +12,7 @@
 
 namespace mystl {
 
-    template<typename T, typename A = allocator<T>>
+    template<typename T, typename A = allocator<T> >
     class vector {
         typedef T value_type;
         typedef T *pointer;
@@ -20,6 +20,7 @@ namespace mystl {
         typedef T &reference;
         typedef const T &const_reference;
         typedef size_t size_type;
+        typedef A allocator_type;
 
     public:
         class iterator {
@@ -64,8 +65,14 @@ namespace mystl {
             }
         }
 
+        explicit vector(const allocator_type &a) noexcept {
+            _capacity = 0;
+            _size = 0;
+            _data = new T[DEFAULT_SIZE];
+        }
+
         ~vector() {
-            ::operator delete(_data);
+
         };
 
         size_type size() const noexcept {

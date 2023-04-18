@@ -10,7 +10,7 @@
 
 
 template<typename T>
-static bool vector_eq(std::vector<T> v, mystl::vector<T> mv) {
+static bool vector_eq(std::vector<T>& v, mystl::vector<T>& mv) {
     if (v.capacity() != mv.capacity()) {
         return false;
     }
@@ -52,6 +52,7 @@ TEST_CASE("test") {
 }
 
 class A {
+public:
     A() {
         std::cout << "A()" << std::endl;
     }
@@ -65,7 +66,7 @@ TEST_CASE("begin") {
     int *p = std::begin(i);
     std::allocator<int> allocator;
     int *b = allocator.allocate(10);
-
+    CHECK(1==1);
 
     ::operator new(sizeof(int));
 
