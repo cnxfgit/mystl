@@ -14,6 +14,7 @@ namespace mystl {
 
     template<typename T, typename A = allocator<T> >
     class vector {
+    public:
         typedef T value_type;
         typedef T *pointer;
         typedef const T *const_pointer;
@@ -22,7 +23,6 @@ namespace mystl {
         typedef size_t size_type;
         typedef A allocator_type;
 
-    public:
         class iterator {
         private:
             pointer _data;
@@ -46,33 +46,46 @@ namespace mystl {
         size_type _size;
         size_type _capacity;
         pointer _data;
+        allocator_type _alloc;
 
     public:
 
         vector() noexcept {
             _capacity = 0;
             _size = 0;
-            _data = new T[DEFAULT_SIZE];
+            _data = _alloc.allocate(DEFAULT_SIZE);
         };
 
         vector(std::initializer_list<T> list) {
             _size = list.size();
             _capacity = list.size();
-            _data = new T[_size];
+            _data = _alloc.allocate(_size);
             pointer iter = _data;
             for (auto c = list.begin(); c != list.end(); ++c, ++iter) {
-                *iter = *c;
+                _alloc.construct(iter, mystl::move(*c));
             }
         }
 
         explicit vector(const allocator_type &a) noexcept {
             _capacity = 0;
             _size = 0;
-            _data = new T[DEFAULT_SIZE];
+            _data = _alloc.allocate(DEFAULT_SIZE);
+        }
+
+        vector(const vector &v) {
+            _alloc = v._alloc;
+            _capacity = v.capacity();
+            _size = v.size();
+            _data = _alloc.allocate(_capacity);
+            for (int i = 0; i < _size; ++i) {
+                _data[i] = v[i];
+            }
         }
 
         ~vector() {
+            for (int i = _size - 1; i >= 0; --i) {
 
+            }
         };
 
         size_type size() const noexcept {
@@ -93,6 +106,10 @@ namespace mystl {
 
         iterator end() {
             return iterator(_data + _size);
+        }
+
+        const_reference operator[](size_type idx) const {
+            return _data[idx];
         }
 
         T &operator[](size_type idx) {

@@ -11,6 +11,7 @@ namespace mystl {
 
     template<typename T>
     class allocator {
+    public:
         typedef T value_type;
         typedef size_t size_type;
         typedef T *pointer;
@@ -18,7 +19,6 @@ namespace mystl {
         typedef T &reference;
         typedef const T &const_reference;
 
-    public:
         template<typename U>
         struct rebind {
             using other = allocator<U>;
