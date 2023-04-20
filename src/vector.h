@@ -83,9 +83,12 @@ namespace mystl {
         }
 
         ~vector() {
-            for (int i = _size - 1; i >= 0; --i) {
-
+            pointer reverse_iter = _data + _size - 1;
+            for (int i = 0; i < _size; ++i) {
+                pointer p = reverse_iter - i;
+                _alloc.destroy(p);
             }
+            _alloc.deallocate(_data, 0);
         };
 
         size_type size() const noexcept {
@@ -112,7 +115,7 @@ namespace mystl {
             return _data[idx];
         }
 
-        T &operator[](size_type idx) {
+        reference operator[](size_type idx) {
             return _data[idx];
         }
     };

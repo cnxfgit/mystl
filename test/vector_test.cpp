@@ -19,6 +19,9 @@ public:
     Ref(const Ref &ref) : copyFlag(true) {
         std::cout << "copy" << std::endl;
     }
+    ~Ref(){
+        std::cout << "~Ref()" << std::endl;
+    }
 };
 
 template<typename T>
