@@ -7,10 +7,11 @@
 
 #include <iostream>
 #include <memory>
-#include "base.h"
 #include "allocator.h"
 
 namespace mystl {
+
+    const size_t DEFAULT_SIZE = 8;
 
     template<typename T, typename A = allocator<T> >
     class vector {
@@ -24,19 +25,107 @@ namespace mystl {
         typedef A allocator_type;
 
         class iterator {
-        private:
-            pointer _data;
         public:
-            iterator() : _data(nullptr) {}
+            typedef T value_type;
+            typedef T *pointer;
+            typedef T &reference;
+            typedef size_t size_type;
+            typedef std::ptrdiff_t difference_type;
+            typedef std::random_access_iterator_tag iterator_category;
+        private:
+            pointer _iter_data;
+        public:
+            iterator() : _iter_data(nullptr) {}
 
-            explicit iterator(pointer data) : _data(data) {}
+            explicit iterator(pointer data) : _iter_data(data) {}
+
+            iterator(const iterator &other) : _iter_data(other._iter_data) {}
 
             pointer base() const noexcept {
-                return nullptr;
+                return _iter_data;
             }
 
-            pointer operator++() {
+            iterator &operator++() noexcept {
+                ++_iter_data;
+                return *this;
+            }
 
+            iterator operator++(int) noexcept {
+                return iterator(_iter_data++);
+            }
+
+            iterator &operator--() noexcept {
+                --_iter_data;
+                return *this;
+            }
+
+            iterator operator--(int) noexcept {
+                return iterator(_iter_data--);
+            }
+
+            iterator operator+(difference_type n) const noexcept {
+                return iterator(_iter_data + n);
+            }
+
+            iterator &operator+=(difference_type n) noexcept {
+                _iter_data += n;
+                return *this;
+            }
+
+            iterator operator-(difference_type n) const noexcept {
+                return iterator(_iter_data - n);
+            }
+
+            iterator &operator-=(difference_type n) noexcept {
+                _iter_data -= n;
+                return *this;
+            }
+
+            reference operator*() const noexcept {
+                return *_iter_data;
+            }
+
+            pointer operator->() const noexcept {
+                return _iter_data;
+            }
+
+            reference operator[](difference_type n) const noexcept {
+                return _iter_data[n];
+            }
+
+            inline friend
+            difference_type operator-(const iterator &lhs, const iterator &rhs) noexcept {
+                return lhs.base() - rhs.base();
+            }
+
+            inline friend
+            bool operator==(const iterator &lhs, const iterator &rhs) noexcept {
+                return lhs.base() == rhs.base();
+            }
+
+            inline friend
+            bool operator!=(const iterator &lhs, const iterator &rhs) noexcept {
+                return lhs.base() != rhs.base();
+            }
+
+            inline friend
+            bool operator>(const iterator &lhs, const iterator &rhs) noexcept {
+                return lhs.base() > rhs.base();
+            }
+
+            inline friend
+            bool operator>=(const iterator &lhs, const iterator &rhs) noexcept {
+                return (lhs.base() >= rhs.base()) || (lhs.base() == rhs.base());
+            }
+
+            inline friend
+            bool operator<(const iterator &lhs, const iterator &rhs) noexcept {
+                return lhs.base() < rhs.base();
+            }
+
+            inline friend
+            bool operator<=(const iterator &lhs, const iterator &rhs) noexcept {
+                return (lhs.base() <= rhs.base()) || (lhs.base() == rhs.base());
             }
 
             ~iterator() = default;
@@ -51,25 +140,41 @@ namespace mystl {
     public:
 
         vector() noexcept {
-            _capacity = 0;
+            _capacity = DEFAULT_SIZE;
             _size = 0;
-            _data = _alloc.allocate(DEFAULT_SIZE);
+            _data = _alloc.allocate(_capacity);
         };
 
         vector(std::initializer_list<T> list) {
             _size = list.size();
             _capacity = list.size();
-            _data = _alloc.allocate(_size);
+            _data = _alloc.allocate(_capacity);
             pointer iter = _data;
             for (auto c = list.begin(); c != list.end(); ++c, ++iter) {
-                _alloc.construct(iter, mystl::move(*c));
+                _alloc.construct(iter, *c);
             }
         }
 
         explicit vector(const allocator_type &a) noexcept {
-            _capacity = 0;
+            _capacity = DEFAULT_SIZE;
             _size = 0;
-            _data = _alloc.allocate(DEFAULT_SIZE);
+            _data = _alloc.allocate(_capacity);
+        }
+
+        vector(size_type n, value_type value) {
+            _capacity = n;
+            _size = n;
+            _data = _alloc.allocate(_capacity);
+            pointer iter = _data;
+            for (int i = 0; i < _size; ++i, ++iter) {
+                _alloc.construct(iter, value);
+            }
+        }
+
+        explicit vector(size_type n, const allocator_type &a = allocator_type()) {
+            _capacity = n;
+            _size = n;
+            _data = _alloc.allocate(_capacity);
         }
 
         vector(const vector &v) {
@@ -79,6 +184,30 @@ namespace mystl {
             _data = _alloc.allocate(_capacity);
             for (int i = 0; i < _size; ++i) {
                 _data[i] = v[i];
+            }
+        }
+
+        vector(vector &&v) noexcept {
+            _alloc = v._alloc;
+            _capacity = v._capacity;
+            _size = v._size;
+            _data = v._data;
+
+            // 防止move后的vector被析构
+            v._data = nullptr;
+            v._capacity = 0;
+            v._size = 0;
+        }
+
+        template<typename Iterator, typename = std::_RequireInputIter<Iterator>>
+        vector(Iterator first, Iterator last, const allocator_type &a = allocator_type()) {
+            _capacity = last - first;
+            _size = _capacity;
+            _data = _alloc.allocate(_capacity);
+
+            pointer iter = _data;
+            for (auto c = first; c != last; ++c, ++iter) {
+                _alloc.construct(iter, *c);
             }
         }
 
@@ -103,11 +232,11 @@ namespace mystl {
             return _size == 0;
         }
 
-        iterator begin() {
+        iterator begin() noexcept {
             return iterator(_data);
         }
 
-        iterator end() {
+        iterator end() noexcept {
             return iterator(_data + _size);
         }
 
