@@ -8,12 +8,13 @@
 #include <iostream>
 #include <memory>
 #include "allocator.h"
+#include "utility.h"
 
 namespace mystl {
 
     const size_t DEFAULT_SIZE = 8;
 
-    template<typename T, typename A = allocator<T> >
+    template<typename T, typename A = allocator <T> >
     class vector {
     public:
         typedef T value_type;
@@ -145,7 +146,7 @@ namespace mystl {
             _data = _alloc.allocate(_capacity);
         };
 
-        vector(std::initializer_list<T> list) {
+        vector(std::initializer_list<value_type> list) {
             _size = list.size();
             _capacity = list.size();
             _data = _alloc.allocate(_capacity);
@@ -220,6 +221,26 @@ namespace mystl {
             _alloc.deallocate(_data, 0);
         };
 
+        vector &operator=(const vector &v) {
+            if (&v != this) {
+                if (v.size() > this->capacity()) {
+                    vector temp(v.begin(), v.end());
+                    this->swap(v);
+                } else if (this->size() > v.size()) {
+
+                }
+            }
+            return *this;
+        }
+
+        vector& operator=(vector&& v)  noexcept {
+
+        }
+
+        vector& operator=(std::initializer_list<value_type> list)  noexcept {
+
+        }
+
         size_type size() const noexcept {
             return _size;
         }
@@ -246,6 +267,17 @@ namespace mystl {
 
         reference operator[](size_type idx) {
             return _data[idx];
+        }
+
+        allocator_type get_allocator() const noexcept {
+            return this->_alloc;
+        }
+
+        void swap(vector &v) {
+            mystl::swap(this->_capacity, v._capacity);
+            mystl::swap(this->_data, v._data);
+            mystl::swap(this->_size, v._size);
+            mystl::swap(this->_alloc, v._alloc);
         }
     };
 

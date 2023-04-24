@@ -30,6 +30,46 @@ public:
     }
 };
 
+class Ptr {
+public:
+    int i;
+
+    Ptr() : i(0) {
+        std::cout << "init(0)" << std::endl;
+    }
+
+    explicit Ptr(int i) : i(i) {
+        std::cout << "init(" << i << ")" << std::endl;
+    }
+
+    Ptr(const Ptr &ref) : i(ref.i) {
+        std::cout << "copy(" << i << ")" << std::endl;
+    }
+
+    Ptr(Ptr &&ref) noexcept: i(ref.i) {
+        std::cout << "move(" << i << ")" << std::endl;
+    }
+
+    ~Ptr() {
+        std::cout << "~Ptr(" << i << ")" << std::endl;
+    }
+
+    bool operator==(Ptr &other) const {
+        return other.i == this->i;
+    }
+
+    bool operator!=(Ptr &other) const {
+        return other.i != this->i;
+    }
+
+    Ptr &operator=(Ptr &&ref) noexcept {
+        this->i = ref.i;
+        return *this;
+    }
+
+    Ptr &operator=(const Ptr &ref) = default;
+};
+
 template<typename T>
 static bool vector_eq(std::vector<T> &v, mystl::vector<T> &mv) {
     if (v.empty() != mv.empty()) {
@@ -163,6 +203,38 @@ TEST_CASE("vector::iterator") {
     CHECK(r8 != ir6);
 }
 
-TEST_CASE("test") {
+TEST_CASE("vector get_allocator()") {
+    std::vector<int> v;
+    mystl::vector<int> mv;
+    std::allocator<int> a1 = v.get_allocator();
+    mystl::allocator<int> a2 = mv.get_allocator();
+    CHECK(a1.max_size() == a2.max_size());
+}
 
+TEST_CASE("vector swap") {
+    std::vector<Ptr> v = {Ptr(1), Ptr(2)};
+    std::vector<Ptr> v1 = {Ptr(3), Ptr(4)};
+
+    mystl::vector<Ptr> mv = {Ptr(1), Ptr(2)};
+    mystl::vector<Ptr> mv1 = {Ptr(3), Ptr(4)};
+    CHECK(vector_eq(v, mv));
+    CHECK(vector_eq(v1, mv1));
+
+    v.swap(v1);
+    mv.swap(mv1);
+
+    CHECK(vector_eq(v, mv));
+    CHECK(vector_eq(v1, mv1));
+}
+
+TEST_CASE("vector operator=") {
+    std::cout << "================== vector operator= ===================" << std::endl;
+    std::vector<Ptr> v = {Ptr(1), Ptr(2)};
+    std::vector<Ptr> v1 = {Ptr(3), Ptr(4)};
+    v1 = v;
+    CHECK(1 == 1);
+
+    std::copy(v.begin(), v.end(), );
+
+    std::cout << "================== vector operator= ===================" << std::endl;
 }
