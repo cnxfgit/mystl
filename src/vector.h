@@ -9,12 +9,14 @@
 #include <memory>
 #include "allocator.h"
 #include "utility.h"
+#include "algorithm.h"
+#include "iterator.h"
 
 namespace mystl {
 
     const size_t DEFAULT_SIZE = 8;
 
-    template<typename T, typename A = allocator <T> >
+    template<typename T, typename A = allocator<T> >
     class vector {
     public:
         typedef T value_type;
@@ -24,113 +26,8 @@ namespace mystl {
         typedef const T &const_reference;
         typedef size_t size_type;
         typedef A allocator_type;
-
-        class iterator {
-        public:
-            typedef T value_type;
-            typedef T *pointer;
-            typedef T &reference;
-            typedef size_t size_type;
-            typedef std::ptrdiff_t difference_type;
-            typedef std::random_access_iterator_tag iterator_category;
-        private:
-            pointer _iter_data;
-        public:
-            iterator() : _iter_data(nullptr) {}
-
-            explicit iterator(pointer data) : _iter_data(data) {}
-
-            iterator(const iterator &other) : _iter_data(other._iter_data) {}
-
-            pointer base() const noexcept {
-                return _iter_data;
-            }
-
-            iterator &operator++() noexcept {
-                ++_iter_data;
-                return *this;
-            }
-
-            iterator operator++(int) noexcept {
-                return iterator(_iter_data++);
-            }
-
-            iterator &operator--() noexcept {
-                --_iter_data;
-                return *this;
-            }
-
-            iterator operator--(int) noexcept {
-                return iterator(_iter_data--);
-            }
-
-            iterator operator+(difference_type n) const noexcept {
-                return iterator(_iter_data + n);
-            }
-
-            iterator &operator+=(difference_type n) noexcept {
-                _iter_data += n;
-                return *this;
-            }
-
-            iterator operator-(difference_type n) const noexcept {
-                return iterator(_iter_data - n);
-            }
-
-            iterator &operator-=(difference_type n) noexcept {
-                _iter_data -= n;
-                return *this;
-            }
-
-            reference operator*() const noexcept {
-                return *_iter_data;
-            }
-
-            pointer operator->() const noexcept {
-                return _iter_data;
-            }
-
-            reference operator[](difference_type n) const noexcept {
-                return _iter_data[n];
-            }
-
-            inline friend
-            difference_type operator-(const iterator &lhs, const iterator &rhs) noexcept {
-                return lhs.base() - rhs.base();
-            }
-
-            inline friend
-            bool operator==(const iterator &lhs, const iterator &rhs) noexcept {
-                return lhs.base() == rhs.base();
-            }
-
-            inline friend
-            bool operator!=(const iterator &lhs, const iterator &rhs) noexcept {
-                return lhs.base() != rhs.base();
-            }
-
-            inline friend
-            bool operator>(const iterator &lhs, const iterator &rhs) noexcept {
-                return lhs.base() > rhs.base();
-            }
-
-            inline friend
-            bool operator>=(const iterator &lhs, const iterator &rhs) noexcept {
-                return (lhs.base() >= rhs.base()) || (lhs.base() == rhs.base());
-            }
-
-            inline friend
-            bool operator<(const iterator &lhs, const iterator &rhs) noexcept {
-                return lhs.base() < rhs.base();
-            }
-
-            inline friend
-            bool operator<=(const iterator &lhs, const iterator &rhs) noexcept {
-                return (lhs.base() <= rhs.base()) || (lhs.base() == rhs.base());
-            }
-
-            ~iterator() = default;
-        };
+        typedef normal_iterator<value_type, pointer> iterator;
+        typedef normal_iterator<const value_type, const_pointer> const_iterator;
 
     private:
         size_type _size;
@@ -224,8 +121,8 @@ namespace mystl {
         vector &operator=(const vector &v) {
             if (&v != this) {
                 if (v.size() > this->capacity()) {
-                    vector temp(v.begin(), v.end());
-                    this->swap(v);
+                    vector temp = vector(v);
+                    this->swap(temp);
                 } else if (this->size() > v.size()) {
 
                 }
@@ -233,11 +130,11 @@ namespace mystl {
             return *this;
         }
 
-        vector& operator=(vector&& v)  noexcept {
+        vector &operator=(vector &&v) noexcept {
 
         }
 
-        vector& operator=(std::initializer_list<value_type> list)  noexcept {
+        vector &operator=(std::initializer_list<value_type> list) noexcept {
 
         }
 
@@ -261,6 +158,14 @@ namespace mystl {
             return iterator(_data + _size);
         }
 
+        const_iterator cbegin() const noexcept {
+            return const_iterator(_data);
+        }
+
+        const_iterator cend() const noexcept {
+            return const_iterator(_data + _size);
+        }
+
         const_reference operator[](size_type idx) const {
             return _data[idx];
         }
@@ -273,7 +178,7 @@ namespace mystl {
             return this->_alloc;
         }
 
-        void swap(vector &v) {
+        void swap(vector &v) noexcept {
             mystl::swap(this->_capacity, v._capacity);
             mystl::swap(this->_data, v._data);
             mystl::swap(this->_size, v._size);

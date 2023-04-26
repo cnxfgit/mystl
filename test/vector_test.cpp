@@ -227,14 +227,35 @@ TEST_CASE("vector swap") {
     CHECK(vector_eq(v1, mv1));
 }
 
+TEST_CASE("vector cbegin() cend()") {
+    std::vector<int> v = {1, 2, 3};
+    mystl::vector<int> mv = {1, 2, 3};
+    const std::vector<int>::const_iterator &vi = v.cbegin();
+    const mystl::vector<int>::const_iterator &mvi = mv.cbegin();
+
+//     *vi = 45;   不可变
+//     *mvi = 123;
+    std::vector<int> v1 = std::vector<int>(v.cbegin(), v.cend());
+    mystl::vector<int> mv1 = mystl::vector<int>(mv.cbegin(), mv.cend());
+    CHECK(vector_eq(v1, mv1));
+}
+
 TEST_CASE("vector operator=") {
     std::cout << "================== vector operator= ===================" << std::endl;
     std::vector<Ptr> v = {Ptr(1), Ptr(2)};
     std::vector<Ptr> v1 = {Ptr(3), Ptr(4)};
     v1 = v;
-    CHECK(1 == 1);
 
-    std::copy(v.begin(), v.end(), );
+    mystl::vector<Ptr> mv = {Ptr(1), Ptr(2)};
+    mystl::vector<Ptr> mv1 = {Ptr(3), Ptr(4)};
+    mv1 = mv;
+    CHECK(vector_eq(v1, mv1));
+
+    auto ci = v.cbegin();
+    ci.base();
+    ci.operator*();
+    v.begin();
+
 
     std::cout << "================== vector operator= ===================" << std::endl;
 }

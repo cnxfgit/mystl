@@ -34,6 +34,11 @@ namespace mystl {
         typedef T type;
     };
 
+
+    // void_t
+    template<typename ...>
+    using void_t = void;
+
 }
 
 #endif //MYSTL_TYPE_TRAITS_H
