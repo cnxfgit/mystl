@@ -6,6 +6,7 @@
 #define MYSTL_ALLOCATOR_H
 
 #include <limits>
+#include <cstddef>
 
 namespace mystl {
 
@@ -19,11 +20,11 @@ namespace mystl {
         typedef T &reference;
         typedef const T &const_reference;
 
+        // 重绑定一个真实分配类型U
         template<typename U>
         struct rebind {
             using other = allocator<U>;
         };
-
 
         allocator() noexcept = default;
 

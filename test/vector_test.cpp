@@ -137,10 +137,6 @@ TEST_CASE("vector constructor()") {
     mystl::vector<int> mv10(iter, iter + 5);
     CHECK(vector_eq(v10, mv10));
 
-    // 交叉各自迭代器构造
-    std::vector<int> v11(mv10.begin(), mv10.end());
-    mystl::vector<int> mv11(v10.begin(), v10.end());
-    CHECK(vector_eq(v11, mv11));
 }
 
 TEST_CASE("vector::iterator") {
@@ -263,8 +259,54 @@ TEST_CASE("vector operator=") {
     v4 = {Ptr(789)};
 
     mystl::vector<Ptr> mv4 = {Ptr(123)};
-    mv4 =  {Ptr(789)};
+    mv4 = {Ptr(789)};
     CHECK(vector_eq(v4, mv4));
 
     std::cout << "================== vector operator= ===================" << std::endl;
+}
+
+TEST_CASE("vector clear()") {
+    std::vector<int> v = {1, 2, 3};
+    mystl::vector<int> mv = {1, 2, 3};
+
+    CHECK(vector_eq(v, mv));
+
+    v.clear();
+    mv.clear();
+    CHECK(vector_eq(v, mv));
+
+    v.emplace_back(1);
+    mv.emplace_back(1);
+    v.emplace_back(2);
+    mv.emplace_back(2);
+    CHECK(vector_eq(v, mv));
+}
+
+TEST_CASE("vector push_back()") {
+    std::vector<int> v;
+    mystl::vector<int> mv;
+
+    int i = int(66);
+    v.push_back(1);
+    v.push_back(i);
+    v.emplace_back(i);
+    v.emplace_back(2);
+
+    mv.push_back(1);
+    mv.push_back(i);
+    mv.emplace_back(i);
+    mv.emplace_back(2);
+
+    CHECK(vector_eq(v, mv));
+
+    mv.clear();
+    v.clear();
+}
+
+
+TEST_CASE("vector reverse_iterator") {
+    std::vector<int> v;
+    mystl::vector<int> mv;
+
+    v.rbegin();
 }

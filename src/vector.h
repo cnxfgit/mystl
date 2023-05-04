@@ -5,8 +5,6 @@
 #ifndef MYSTL_VECTOR_H
 #define MYSTL_VECTOR_H
 
-#include <iostream>
-#include <memory>
 #include "allocator.h"
 #include "utility.h"
 #include "algorithm.h"
@@ -27,14 +25,38 @@ namespace mystl {
         typedef const T &const_reference;
         typedef size_t size_type;
         typedef A allocator_type;
-        typedef normal_iterator<value_type, pointer> iterator;
-        typedef normal_iterator<const value_type, const_pointer> const_iterator;
+        typedef normal_iterator<pointer, vector> iterator;
+        typedef normal_iterator<const_pointer, vector> const_iterator;
+//        typedef reverse_iterator<iterator> reverse_iterator;
+//        typedef reverse_iterator<const_iterator> const_reverse_iterator;
+
 
     private:
         size_type _size;
         size_type _capacity;
         pointer _data;
         allocator_type _alloc;
+
+        // 不重置长度的清空
+        void _clear(iterator begin, iterator end) {
+            for (iterator temp = end - 1; temp != begin - 1; temp = --temp) {
+                _alloc.destroy(temp.base());
+            }
+        }
+
+        // 扩容
+        void _expansion() {
+            // 旧数据迭代器
+            iterator begin = this->begin();
+            iterator end = this->end();
+            // 扩容并复制旧值
+            _capacity = _capacity * 2;
+            _data = _alloc.allocate(_capacity);
+            copy(begin, end, this->begin());
+            // 析构原地址
+            _clear(begin, end);
+            _alloc.deallocate(begin.base(), 0);
+        }
 
     public:
 
@@ -98,7 +120,7 @@ namespace mystl {
             v._size = 0;
         }
 
-        template<typename Iterator, typename = std::_RequireInputIter<Iterator>>
+        template<typename Iterator, typename = RequireInputIter<Iterator>>
         vector(Iterator first, Iterator last, const allocator_type &a = allocator_type()) {
             _capacity = last - first;
             _size = _capacity;
@@ -206,6 +228,38 @@ namespace mystl {
             mystl::swap(this->_size, v._size);
             mystl::swap(this->_alloc, v._alloc);
         }
+
+        // 重置长度的清空
+        void clear() noexcept {
+            _clear(this->begin(), this->end());
+            _size = 0;
+        }
+
+        template<typename ...Args>
+        void emplace_back(Args &&...args) {
+            if (_size == _capacity) {
+                _expansion();
+            }
+
+            // 构造
+            _alloc.construct(this->end().base(), forward<Args>(args)...);
+            ++_size;
+        }
+
+        void push_back(const value_type &x) {
+            if (_size == _capacity) {
+                _expansion();
+            }
+
+            // 构造
+            _alloc.construct(this->end().base(), x);
+            ++_size;
+        }
+
+        void push_back(value_type &&x) {
+            emplace_back(move(x));
+        }
+
     };
 
 }

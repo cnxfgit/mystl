@@ -39,6 +39,13 @@ namespace mystl {
     template<typename ...>
     using void_t = void;
 
+
+    template<typename From, typename To>
+    struct is_convertible : public
+            std::integral_constant<bool, std::__is_convertible_helper<From, To>::value> {
+    };
+
+
 }
 
 #endif //MYSTL_TYPE_TRAITS_H

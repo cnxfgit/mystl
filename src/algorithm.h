@@ -5,8 +5,6 @@
 #ifndef MYSTL_ALGORITHM_H
 #define MYSTL_ALGORITHM_H
 
-#include <iterator>
-
 namespace mystl {
 
     template<typename InputIterator, typename OutputIterator>

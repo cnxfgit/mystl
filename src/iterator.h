@@ -6,7 +6,6 @@
 #define MYSTL_ITERATOR_H
 
 #include "type_traits.h"
-#include <iterator>
 
 namespace mystl {
 
@@ -37,18 +36,67 @@ namespace mystl {
         typedef Distance difference_type;
     };
 
+    template<typename Iterator,
+            bool = std::__has_iterator_category<Iterator>::value>
+    struct _iterator_traits {
+    };
+
+    template<typename Iterator>
+    struct _iterator_traits<Iterator, true> {
+        typedef typename Iterator::iterator_category iterator_category;
+        typedef typename Iterator::value_type value_type;
+        typedef typename Iterator::difference_type difference_type;
+        typedef typename Iterator::pointer pointer;
+        typedef typename Iterator::reference reference;
+    };
+
+    template<typename Iterator>
+    struct iterator_traits
+            : public _iterator_traits<Iterator> {
+    };
+
+    // 指针特化
+    template<typename T>
+    struct iterator_traits<T *> {
+        typedef random_access_iterator_tag iterator_category;
+        typedef T value_type;
+        typedef std::ptrdiff_t difference_type;
+        typedef T *pointer;
+        typedef T &reference;
+    };
+
+    // const 指针特化
+    template<typename T>
+    struct iterator_traits<const T *> {
+        typedef random_access_iterator_tag iterator_category;
+        typedef T value_type;
+        typedef std::ptrdiff_t difference_type;
+        typedef const T *pointer;
+        typedef const T &reference;
+    };
+
+    // 是否输入迭代器
+    template<typename InputIterator>
+    using RequireInputIter = typename
+    enable_if<is_convertible<typename
+    iterator_traits<InputIterator>::iterator_category,
+            input_iterator_tag>::value>::type;
 
     // 通用迭代器
-    template<typename T, typename Pointer>
+    template<typename Iterator, typename Container>
     class normal_iterator {
     protected:
-        Pointer _data;
+        // 可能是迭代器或者指针类型
+        Iterator _data;
+        typedef iterator_traits<Iterator> traits_type;
+
     public:
-        typedef T value_type;
-        typedef Pointer pointer;
-        typedef T& reference;
-        typedef std::ptrdiff_t difference_type;
-        typedef std::random_access_iterator_tag iterator_category;
+        typedef Iterator iterator_type;
+        typedef typename traits_type::iterator_category iterator_category;
+        typedef typename traits_type::value_type value_type;
+        typedef typename traits_type::difference_type difference_type;
+        typedef typename traits_type::reference reference;
+        typedef typename traits_type::pointer pointer;
 
         normal_iterator() : _data(nullptr) {}
 
@@ -144,6 +192,34 @@ namespace mystl {
         }
 
         ~normal_iterator() = default;
+    };
+
+
+    template<typename Iterator>
+    class reverse_iterator : public iterator<
+            typename iterator_traits<Iterator>::iterator_category,
+            typename iterator_traits<Iterator>::value_type,
+            typename iterator_traits<Iterator>::difference_type,
+            typename iterator_traits<Iterator>::pointer,
+            typename iterator_traits<Iterator>::reference> {
+
+    protected:
+        Iterator current;
+
+        typedef iterator_traits<Iterator> traits_type;
+
+    public:
+        typedef Iterator iterator_type;
+        typedef typename traits_type::difference_type difference_type;
+        typedef typename traits_type::pointer pointer;
+        typedef typename traits_type::reference reference;
+
+        // 默认构造
+        reverse_iterator() : current() {}
+
+        // 默认析构
+        ~reverse_iterator() = default;
+
     };
 
 
