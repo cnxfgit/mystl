@@ -11,14 +11,6 @@ namespace mystl {
 
     template<typename InputIterator, typename OutputIterator>
     inline OutputIterator copy(InputIterator first, InputIterator last, OutputIterator result) {
-        static_assert(std::is_same<typename std::iterator_traits<InputIterator>::iterator_category,
-                              std::input_iterator_tag>::value,
-                      "InputIterator must be an input iterator");
-
-        static_assert(std::is_same<typename std::iterator_traits<OutputIterator>::iterator_category,
-                              std::output_iterator_tag>::value,
-                      "OutputIterator must be an output iterator");
-
         while (first != last) {
             *result = *first;
             ++result;

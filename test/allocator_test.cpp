@@ -55,22 +55,9 @@ TEST_CASE("allocator construct() destroy()") {
 }
 
 TEST_CASE("allocator<void>") {
+    // c++11 已经废弃allocator<void> 仅仅作为适配
     std::allocator<void> sa;
     mystl::allocator<void> ma;
-    AllocatorRef sa_ref;
-    sa.construct(&sa_ref);
-
-    AllocatorRef ma_ref;
-    ma.construct(&ma_ref);
-    CHECK_EQ(sa_ref.i, ma_ref.i);
-
-    sa.construct(&sa_ref, 66);
-    ma.construct(&ma_ref, 66);
-    CHECK_EQ(sa_ref.i, ma_ref.i);
-
-    sa.destroy(&sa_ref);
-    ma.destroy(&ma_ref);
-    CHECK_EQ(sa_ref.i, ma_ref.i);
 }
 
 TEST_CASE("allocator max_size()") {

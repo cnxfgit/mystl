@@ -11,6 +11,7 @@
 #include "utility.h"
 #include "algorithm.h"
 #include "iterator.h"
+#include "memory.h"
 
 namespace mystl {
 
@@ -124,18 +125,39 @@ namespace mystl {
                     vector temp = vector(v);
                     this->swap(temp);
                 } else if (this->size() > v.size()) {
-
+                    auto end = mystl::copy(v.cbegin(), v.cend(), this->begin());
+                    this->_alloc = v._alloc;
+                    for (auto i = end; i != this->end(); ++i) {
+                        _alloc.destroy(i.base());
+                    }
+                    this->_size = v.size();
+                } else {
+                    mystl::copy(v.cbegin(), v.cbegin() + this->size(), this->begin());
+                    mystl::uninitialized_copy(v.cbegin() + this->size(), v.cend(), this->end());
                 }
             }
             return *this;
         }
 
         vector &operator=(vector &&v) noexcept {
+            if (this != &v) {
+                _alloc = v._alloc;
+                _capacity = v._capacity;
+                _size = v._size;
+                _data = v._data;
 
+                // 防止move后的vector被析构
+                v._data = nullptr;
+                v._capacity = 0;
+                v._size = 0;
+            }
+            return *this;
         }
 
         vector &operator=(std::initializer_list<value_type> list) noexcept {
-
+            vector temp(list.begin(), list.end());
+            this->swap(temp);
+            return *this;
         }
 
         size_type size() const noexcept {

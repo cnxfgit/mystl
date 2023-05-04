@@ -6,7 +6,6 @@
 #include <vector>
 #include "vector.h"
 #include <iostream>
-#include <memory>
 #include "utility.h"
 
 class Ref {
@@ -251,11 +250,21 @@ TEST_CASE("vector operator=") {
     mv1 = mv;
     CHECK(vector_eq(v1, mv1));
 
-    auto ci = v.cbegin();
-    ci.base();
-    ci.operator*();
-    v.begin();
+    std::vector<int> v2 = {6, 7, 8};
+    std::vector<int> v3;
+    v3 = std::move(v2);
 
+    mystl::vector<int> mv2 = {6, 7, 8};
+    mystl::vector<int> mv3;
+    mv3 = mystl::move(mv2);
+    CHECK(vector_eq(v3, mv3));
+
+    std::vector<Ptr> v4 = {Ptr(456)};
+    v4 = {Ptr(789)};
+
+    mystl::vector<Ptr> mv4 = {Ptr(123)};
+    mv4 =  {Ptr(789)};
+    CHECK(vector_eq(v4, mv4));
 
     std::cout << "================== vector operator= ===================" << std::endl;
 }
