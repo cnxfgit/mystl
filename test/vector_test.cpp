@@ -144,7 +144,7 @@ TEST_CASE("vector::iterator") {
     mystl::vector<int> vec2 = {1, 2, 3};
     auto iter1 = vec1.begin();
     auto iter2 = vec2.begin();
-    iter1 - iter1;
+    iter2 - iter2;
 
     int *base1 = iter1.base();
     int *base2 = iter2.base();
@@ -305,8 +305,61 @@ TEST_CASE("vector push_back()") {
 
 
 TEST_CASE("vector reverse_iterator") {
-    std::vector<int> v;
-    mystl::vector<int> mv;
+    std::vector<int> vec1 = {1, 2, 3};
+    mystl::vector<int> vec2 = {1, 2, 3};
 
-    v.rbegin();
+    auto iter1 = vec1.rbegin();
+    auto iter2 = vec2.rbegin();
+    iter2 - iter2;
+
+    int base1 = *iter1;
+    int base2 = *iter2;
+    CHECK_EQ(base1, base2);
+
+    int *p1 = iter1.operator->();
+    int *p2 = iter2.operator->();
+    CHECK_NE(p1, p2);
+
+    int &r1 = iter1.operator*();
+    int &r2 = iter2.operator*();
+    CHECK_EQ(r1, r2);
+
+    auto ir1 = iter1++;
+    auto ir2 = iter2++;
+    CHECK_EQ(*ir1, *ir2);
+
+    auto &ir3 = ++iter1;
+    auto &ir4 = ++iter2;
+    CHECK_EQ(*ir3, *ir4);
+
+    int &r3 = iter1.operator[](0);
+    int &r4 = iter2.operator[](0);
+    CHECK_EQ(r3, r4);
+
+    auto ir5 = iter1--;
+    auto ir6 = iter2--;
+    CHECK_EQ(*ir5, *ir6);
+
+    auto &ir7 = --iter1;
+    auto &ir8 = --iter2;
+    CHECK_EQ(*ir7, *ir8);
+
+    auto r5 = iter1.operator+(1);
+    auto r6 = iter2.operator+(1);
+    CHECK_EQ(*r5, *r6);
+
+    auto &ir9 = iter1.operator+=(1);
+    auto &ir10 = iter2.operator+=(1);
+    CHECK_EQ(*ir9, *ir10);
+
+    auto r7 = iter1.operator-(1);
+    auto r8 = iter2.operator-(1);
+    CHECK_EQ(*r7, *r8);
+
+    auto &ir11 = iter1.operator-=(1);
+    auto &ir12 = iter2.operator-=(1);
+    CHECK_EQ(*ir11, *ir12);
+
+    CHECK(iter2.base() == ir8.base());
+    CHECK(r8.base() != ir6.base());
 }

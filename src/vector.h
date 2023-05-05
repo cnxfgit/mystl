@@ -27,8 +27,8 @@ namespace mystl {
         typedef A allocator_type;
         typedef normal_iterator<pointer, vector> iterator;
         typedef normal_iterator<const_pointer, vector> const_iterator;
-//        typedef reverse_iterator<iterator> reverse_iterator;
-//        typedef reverse_iterator<const_iterator> const_reverse_iterator;
+        typedef mystl::reverse_iterator<iterator> reverse_iterator;
+        typedef mystl::reverse_iterator<const_iterator> const_reverse_iterator;
 
 
     private:
@@ -108,12 +108,8 @@ namespace mystl {
             }
         }
 
-        vector(vector &&v) noexcept {
-            _alloc = v._alloc;
-            _capacity = v._capacity;
-            _size = v._size;
-            _data = v._data;
-
+        vector(vector &&v) noexcept: _alloc(v._alloc), _capacity(v._capacity),
+                                     _size(v._size), _data(v._data) {
             // 防止move后的vector被析构
             v._data = nullptr;
             v._capacity = 0;
@@ -198,8 +194,16 @@ namespace mystl {
             return iterator(_data);
         }
 
+        const_iterator begin() const noexcept {
+            return const_iterator(_data);
+        }
+
         iterator end() noexcept {
             return iterator(_data + _size);
+        }
+
+        const_iterator end() const noexcept {
+            return const_iterator(_data + _size);
         }
 
         const_iterator cbegin() const noexcept {
@@ -208,6 +212,30 @@ namespace mystl {
 
         const_iterator cend() const noexcept {
             return const_iterator(_data + _size);
+        }
+
+        reverse_iterator rbegin() noexcept {
+            return reverse_iterator(end());
+        };
+
+        const_reverse_iterator rbegin() const noexcept {
+            return const_reverse_iterator(end());
+        }
+
+        reverse_iterator rend() noexcept {
+            return reverse_iterator(begin());
+        }
+
+        const_reverse_iterator rend() const noexcept {
+            return const_reverse_iterator(begin());
+        }
+
+        const_reverse_iterator crbegin() const noexcept {
+            return const_reverse_iterator(end());
+        }
+
+        const_reverse_iterator crend() const noexcept {
+            return const_reverse_iterator(begin());
         }
 
         const_reference operator[](size_type idx) const {
