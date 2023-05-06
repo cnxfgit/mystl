@@ -5,7 +5,6 @@
 #ifndef MYSTL_VECTOR_H
 #define MYSTL_VECTOR_H
 
-#include "allocator.h"
 #include "utility.h"
 #include "algorithm.h"
 #include "iterator.h"
@@ -29,7 +28,6 @@ namespace mystl {
         typedef normal_iterator<const_pointer, vector> const_iterator;
         typedef mystl::reverse_iterator<iterator> reverse_iterator;
         typedef mystl::reverse_iterator<const_iterator> const_reverse_iterator;
-
 
     private:
         size_type _size;
@@ -180,6 +178,10 @@ namespace mystl {
 
         size_type size() const noexcept {
             return _size;
+        }
+
+        size_type max_size() const noexcept {
+            return _alloc.max_size();
         }
 
         size_type capacity() const noexcept {

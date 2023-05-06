@@ -77,10 +77,8 @@ namespace mystl {
 
     // 是否输入迭代器
     template<typename InputIterator>
-    using RequireInputIter = typename
-    enable_if<is_convertible<typename
-    iterator_traits<InputIterator>::iterator_category,
-            input_iterator_tag>::value>::type;
+    using RequireInputIter = enable_if_t<is_convertible<typename
+    iterator_traits<InputIterator>::iterator_category, input_iterator_tag>::value>;
 
     // 通用迭代器
     template<typename Iterator, typename Container>

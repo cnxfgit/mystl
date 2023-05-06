@@ -303,7 +303,6 @@ TEST_CASE("vector push_back()") {
     v.clear();
 }
 
-
 TEST_CASE("vector reverse_iterator") {
     std::vector<int> vec1 = {1, 2, 3};
     mystl::vector<int> vec2 = {1, 2, 3};
@@ -362,4 +361,12 @@ TEST_CASE("vector reverse_iterator") {
 
     CHECK(iter2.base() == ir8.base());
     CHECK(r8.base() != ir6.base());
+}
+
+TEST_CASE("vector max_size()") {
+    std::vector<int> v;
+    mystl::vector<int> mv;
+
+    CHECK_EQ(v.max_size(), mv.max_size());
+
 }

@@ -10,8 +10,8 @@
 namespace mystl {
 
     template<typename T>
-    constexpr typename remove_reference<T>::type &&move(T &&t) noexcept {
-        return static_cast<typename remove_reference<T>::type &&>(t);
+    constexpr remove_reference_t<T> &&move(T &&t) noexcept {
+        return static_cast<remove_reference_t<T> &&>(t);
     }
 
     template<typename T>
@@ -27,7 +27,7 @@ namespace mystl {
     }
 
     template<typename T>
-    constexpr T &&forward(typename remove_reference<T>::type &t) noexcept {
+    constexpr T &&forward(remove_reference_t<T> &t) noexcept {
         return static_cast<T &&>(t);
     }
 }

@@ -4,9 +4,7 @@
 
 #include <doctest/doctest.h>
 #include <memory>
-#include <iostream>
 #include <vector>
-#include "allocator.h"
 #include "vector.h"
 
 class AllocatorRef {
