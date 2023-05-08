@@ -370,3 +370,31 @@ TEST_CASE("vector max_size()") {
     CHECK_EQ(v.max_size(), mv.max_size());
 
 }
+
+
+TEST_CASE("vector resize()") {
+    std::vector<int> v = {1, 2, 3, 4, 5, 6, 7, 8};
+    mystl::vector<int> mv = {1, 2, 3, 4, 5, 6, 7, 8};
+    CHECK(vector_eq(v, mv));
+
+    v.resize(5);
+    mv.resize(5);
+    CHECK(vector_eq(v, mv));
+
+    v.resize(10);
+    mv.resize(10);
+    CHECK(vector_eq(v, mv));
+}
+
+TEST_CASE("vector reserve()") {
+    std::vector<int> v = {1, 2, 3, 4, 5, 6, 7, 8};
+    mystl::vector<int> mv = {1, 2, 3, 4, 5, 6, 7, 8};
+
+    v.reserve(5);
+    mv.reserve(5);
+    CHECK(vector_eq(v, mv));
+
+    v.reserve(10);
+    mv.reserve(10);
+    CHECK_EQ(v.capacity(), mv.capacity());
+}

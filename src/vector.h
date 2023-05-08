@@ -35,6 +35,32 @@ namespace mystl {
         pointer _data;
         allocator_type _alloc;
 
+        // 重定义长度
+        template<bool B>
+        void _resize(size_type n, const value_type &value = value_type()) {
+            if (n <= 0) {
+                clear();
+            } else if (n < _size) {
+                iterator iter(_data + n);
+                for (; iter != end(); ++iter) {
+                    _alloc.destroy(iter.base());
+                }
+                _size = n;
+            } else if (n > _size) {
+                if (n > _capacity) {
+                    _expansion();
+                }
+                for (int i = 0; i < n - _size; ++i) {
+                    if (B) {
+                        push_back(value);
+                    } else {
+                        push_back(value_type());
+                    }
+                }
+                _size = n;
+            }
+        }
+
         // 不重置长度的清空
         void _clear(iterator begin, iterator end) {
             for (iterator temp = end - 1; temp != begin - 1; temp = --temp) {
@@ -182,6 +208,33 @@ namespace mystl {
 
         size_type max_size() const noexcept {
             return _alloc.max_size();
+        }
+
+        // 使用value_type的默认值
+        void resize(size_type n) {
+            _resize<false>(n);
+        }
+
+        void resize(size_type n, const value_type &value) {
+            _resize<true>(n, value);
+        }
+
+        void reserve(size_type n) {
+            if (n > max_size()) {
+                throw std::bad_alloc();
+            }
+            if (n > _capacity) {
+                // 旧数据迭代器
+                iterator begin = this->begin();
+                iterator end = this->end();
+                // 扩容并复制旧值
+                _capacity = n;
+                _data = _alloc.allocate(_capacity);
+                copy(begin, end, this->begin());
+                // 析构原地址
+                _clear(begin, end);
+                _alloc.deallocate(begin.base(), 0);
+            }
         }
 
         size_type capacity() const noexcept {
