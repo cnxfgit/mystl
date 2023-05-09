@@ -9,6 +9,7 @@
 #include "algorithm.h"
 #include "iterator.h"
 #include "memory.h"
+#include "exception.h"
 
 namespace mystl {
 
@@ -315,6 +316,20 @@ namespace mystl {
             return _data[idx];
         }
 
+        const_reference at(size_type n) const {
+            if (n >= _size) {
+                throw out_of_range("index out of range.");
+            }
+            return (*this)[n];
+        }
+
+        reference at(size_type n) {
+            if (n >= _size) {
+                throw out_of_range("index out of range.");
+            }
+            return (*this)[n];
+        }
+
         allocator_type get_allocator() const noexcept {
             return this->_alloc;
         }
@@ -357,7 +372,73 @@ namespace mystl {
             emplace_back(move(x));
         }
 
+
+        template<class Ty, class Alloc>
+        friend void swap(vector<Ty, Alloc> &x, vector<Ty, Alloc> &y);
     };
+
+    template<class Ty, class Alloc>
+    void swap(vector<Ty, Alloc> &x, vector<Ty, Alloc> &y) {
+        mystl::swap(x._capacity, y._capacity);
+        mystl::swap(x._data, y._data);
+        mystl::swap(x._size, y._size);
+        mystl::swap(x._alloc, y._alloc);
+    }
+
+    template<class Ty, class Alloc>
+    bool operator==(const vector<Ty, Alloc> &lhs, const vector<Ty, Alloc> &rhs) {
+        if (lhs.size() != rhs.size()) return false;
+        auto lhs_iter = lhs.begin();
+        auto rhs_iter = rhs.begin();
+        auto end = lhs.end();
+        for (; lhs_iter != end; ++lhs_iter, ++rhs_iter) {
+            if (*lhs_iter != *rhs_iter) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    template<class Ty, class Alloc>
+    bool operator!=(const vector<Ty, Alloc> &lhs, const vector<Ty, Alloc> &rhs) {
+        return !(lhs == rhs);
+    }
+
+    template<class Ty, class Alloc>
+    bool operator<(const vector<Ty, Alloc> &lhs, const vector<Ty, Alloc> &rhs) {
+        size_t min_size = lhs.size() < rhs.size() ? lhs.size() : rhs.size();
+        for (int i = 0; i < min_size; ++i) {
+            if (lhs[i] < rhs[i]) {
+                return true;
+            } else if (lhs[i] > rhs[i]) {
+                return false;
+            }
+        }
+        return lhs.size() < rhs.size();
+    }
+
+    template<class Ty, class Alloc>
+    bool operator<=(const vector<Ty, Alloc> &lhs, const vector<Ty, Alloc> &rhs) {
+        return !(lhs > rhs);
+    }
+
+    template<class Ty, class Alloc>
+    bool operator>(const vector<Ty, Alloc> &lhs, const vector<Ty, Alloc> &rhs) {
+        size_t min_size = lhs.size() < rhs.size() ? lhs.size() : rhs.size();
+        for (int i = 0; i < min_size; ++i) {
+            if (lhs[i] > rhs[i]) {
+                return true;
+            } else if (lhs[i] < rhs[i]) {
+                return false;
+            }
+        }
+        return lhs.size() > rhs.size();
+    }
+
+    template<class Ty, class Alloc>
+    bool operator>=(const vector<Ty, Alloc> &lhs, const vector<Ty, Alloc> &rhs) {
+        return !(lhs < rhs);
+    }
 
 }
 

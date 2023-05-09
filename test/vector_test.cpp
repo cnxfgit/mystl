@@ -399,7 +399,7 @@ TEST_CASE("vector reserve()") {
     CHECK_EQ(v.capacity(), mv.capacity());
 }
 
-TEST_CASE("vector") {
+TEST_CASE("vector shrink_to_fit()") {
     std::vector<int> v;
     mystl::vector<int> mv;
 
@@ -419,4 +419,141 @@ TEST_CASE("vector") {
     v.shrink_to_fit();
     mv.shrink_to_fit();
     CHECK(vector_eq(v, mv));
+}
+
+TEST_CASE("vector swap(x, y)") {
+    std::vector<int> v = {1, 2, 3};
+    mystl::vector<int> mv = {1, 2, 3};
+
+    std::vector<int> v1 = {7, 8, 9};
+    mystl::vector<int> mv1 = {7, 8, 9};
+
+    std::swap(v, v1);
+    mystl::swap(mv, mv1);
+    CHECK(vector_eq(v, mv));
+    CHECK(vector_eq(v1, mv1));
+}
+
+TEST_CASE("vector operator==") {
+    std::vector<int> v = {1, 2, 3};
+    std::vector<int> v1 = {1, 2, 3};
+    mystl::vector<int> mv = {1, 2, 3};
+    mystl::vector<int> mv1 = {1, 2, 3};
+    CHECK_EQ(v1 == v, mv == mv1);
+
+    std::vector<int> v2 = {1, 2, 3};
+    std::vector<int> v3 = {1, 2, 3, 0};
+    mystl::vector<int> mv2 = {1, 2, 3};
+    mystl::vector<int> mv3 = {1, 2, 3, 0};
+    CHECK_EQ(v2 == v3, mv2 == mv3);
+
+    std::vector<int> v4;
+    std::vector<int> v5;
+    mystl::vector<int> mv4;
+    mystl::vector<int> mv5;
+    CHECK_EQ(v4 == v5, mv4 == mv5);
+
+    std::vector<int> v6 = {1, 3};
+    std::vector<int> v7 = {1, 2};
+    mystl::vector<int> mv6 = {1, 3};
+    mystl::vector<int> mv7 = {1, 2};
+    CHECK_EQ(v6 == v7, mv6 == mv7);
+}
+
+TEST_CASE("vector operator!=") {
+    std::vector<int> v = {1, 2, 3};
+    std::vector<int> v1 = {1, 2, 3};
+    mystl::vector<int> mv = {1, 2, 3};
+    mystl::vector<int> mv1 = {1, 2, 3};
+    CHECK_EQ(v1 != v, mv != mv1);
+
+    std::vector<int> v2 = {1, 2, 3};
+    std::vector<int> v3 = {1, 2, 3, 0};
+    mystl::vector<int> mv2 = {1, 2, 3};
+    mystl::vector<int> mv3 = {1, 2, 3, 0};
+    CHECK_EQ(v2 != v3, mv2 != mv3);
+
+    std::vector<int> v4;
+    std::vector<int> v5;
+    mystl::vector<int> mv4;
+    mystl::vector<int> mv5;
+    CHECK_EQ(v4 != v5, mv4 != mv5);
+
+    std::vector<int> v6 = {1, 3};
+    std::vector<int> v7 = {1, 2};
+    mystl::vector<int> mv6 = {1, 3};
+    mystl::vector<int> mv7 = {1, 2};
+    CHECK_EQ(v6 != v7, mv6 != mv7);
+}
+
+TEST_CASE("vector operator> >=") {
+    std::vector<int> v = {1, 2, 3};
+    std::vector<int> v1 = {1, 2, 3};
+    mystl::vector<int> mv = {1, 2, 3};
+    mystl::vector<int> mv1 = {1, 2, 3};
+    CHECK_EQ(v > v1, mv > mv1);
+    CHECK_EQ(v >= v1, mv >= mv1);
+
+    std::vector<int> v2;
+    std::vector<int> v3;
+    mystl::vector<int> mv2;
+    mystl::vector<int> mv3;
+    CHECK_EQ(v2 > v3, mv2 > mv3);
+    CHECK_EQ(v2 >= v3, mv2 >= mv3);
+
+    std::vector<int> v4 = {1, 3};
+    std::vector<int> v5 = {1};
+    mystl::vector<int> mv4 = {1, 3};
+    mystl::vector<int> mv5 = {1};
+    CHECK_EQ(v4 > v5, mv4 > mv5);
+    CHECK_EQ(v4 >= v5, mv4 >= mv5);
+
+    std::vector<int> v6 = {2};
+    std::vector<int> v7 = {1, 3};
+    mystl::vector<int> mv6 = {2};
+    mystl::vector<int> mv7 = {1, 3};
+    CHECK_EQ(v6 > v7, mv6 > mv7);
+    CHECK_EQ(v6 >= v7, mv6 >= mv7);
+}
+
+TEST_CASE("vector operator< <=") {
+    std::vector<int> v = {1, 2, 3};
+    std::vector<int> v1 = {1, 2, 3};
+    mystl::vector<int> mv = {1, 2, 3};
+    mystl::vector<int> mv1 = {1, 2, 3};
+    CHECK_EQ(v < v1, mv < mv1);
+    CHECK_EQ(v <= v1, mv <= mv1);
+
+    std::vector<int> v2;
+    std::vector<int> v3;
+    mystl::vector<int> mv2;
+    mystl::vector<int> mv3;
+    CHECK_EQ(v2 < v3, mv2 < mv3);
+    CHECK_EQ(v2 <= v3, mv2 <= mv3);
+
+    std::vector<int> v4 = {1, 3};
+    std::vector<int> v5 = {1};
+    mystl::vector<int> mv4 = {1, 3};
+    mystl::vector<int> mv5 = {1};
+    CHECK_EQ(v4 < v5, mv4 < mv5);
+    CHECK_EQ(v4 <= v5, mv4 <= mv5);
+
+    std::vector<int> v6 = {1, 3};
+    std::vector<int> v7 = {2};
+    mystl::vector<int> mv6 = {1, 3};
+    mystl::vector<int> mv7 = {2};
+    CHECK_EQ(v6 < v7, mv6 < mv7);
+    CHECK_EQ(v6 <= v7, mv6 <= mv7);
+}
+
+TEST_CASE("vector at()") {
+    std::vector<int> v = {1, 2, 3};
+    mystl::vector<int> mv = {1, 2, 3};
+
+    try {
+        mv.at(3);
+    } catch (mystl::out_of_range& e) {
+        std::cout << e.what() << std::endl;
+    }
+
 }
