@@ -237,6 +237,20 @@ namespace mystl {
             }
         }
 
+        void shrink_to_fit() {
+            if (_capacity <= 8) return;
+            if (_size == _capacity) return;
+            size_type new_capacity = _size <= DEFAULT_SIZE ? DEFAULT_SIZE : _size;
+            pointer new_data = _alloc.allocate(new_capacity);
+            // 拷贝 析构
+            copy(begin(), end(), new_data);
+            clear();
+            // 重赋值
+            _data = new_data;
+            _capacity = new_capacity;
+            _size = new_capacity;
+        };
+
         size_type capacity() const noexcept {
             return _capacity;
         }

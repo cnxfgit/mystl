@@ -398,3 +398,25 @@ TEST_CASE("vector reserve()") {
     mv.reserve(10);
     CHECK_EQ(v.capacity(), mv.capacity());
 }
+
+TEST_CASE("vector") {
+    std::vector<int> v;
+    mystl::vector<int> mv;
+
+    for (int i = 0; i < 20; ++i) {
+        v.push_back(i);
+        mv.push_back(i);
+    }
+
+    v.reserve(10);
+    mv.reserve(10);
+    v.shrink_to_fit();
+    mv.shrink_to_fit();
+    CHECK(vector_eq(v, mv));
+
+    v.reserve(5);
+    mv.reserve(5);
+    v.shrink_to_fit();
+    mv.shrink_to_fit();
+    CHECK(vector_eq(v, mv));
+}
