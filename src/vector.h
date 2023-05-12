@@ -18,17 +18,17 @@ namespace mystl {
     template<typename T, typename A = allocator<T> >
     class vector {
     public:
-        typedef T value_type;
-        typedef T *pointer;
-        typedef const T *const_pointer;
-        typedef T &reference;
-        typedef const T &const_reference;
-        typedef size_t size_type;
-        typedef A allocator_type;
-        typedef normal_iterator<pointer, vector> iterator;
-        typedef normal_iterator<const_pointer, vector> const_iterator;
-        typedef mystl::reverse_iterator<iterator> reverse_iterator;
-        typedef mystl::reverse_iterator<const_iterator> const_reverse_iterator;
+        using value_type = T;
+        using pointer = T *;
+        using const_pointer = const T *;
+        using reference = T &;
+        using const_reference = const T &;
+        using size_type = size_t;
+        using allocator_type = A;
+        using iterator = normal_iterator<pointer, vector>;
+        using const_iterator = normal_iterator<const_pointer, vector>;
+        using reverse_iterator = mystl::reverse_iterator<iterator>;
+        using const_reverse_iterator = mystl::reverse_iterator<const_iterator>;
 
     private:
         size_type _size;
@@ -251,6 +251,14 @@ namespace mystl {
             _capacity = new_capacity;
             _size = new_capacity;
         };
+
+        reference front() {
+            return *begin();
+        }
+
+        const_reference front() const {
+            return *begin();
+        }
 
         size_type capacity() const noexcept {
             return _capacity;

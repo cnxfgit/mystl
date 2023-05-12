@@ -29,11 +29,11 @@ namespace mystl {
     template<typename Category, typename T, typename Distance = std::ptrdiff_t,
             typename Pointer = T *, typename Reference = T &>
     struct iterator {
-        typedef Category iterator_category;
-        typedef T value_type;
-        typedef Pointer pointer;
-        typedef Reference reference;
-        typedef Distance difference_type;
+        using iterator_category = Category;;
+        using value_type = T;
+        using pointer = Pointer;
+        using reference = Reference;
+        using difference_type = Distance;
     };
 
     template<typename Iterator,
@@ -43,11 +43,11 @@ namespace mystl {
 
     template<typename Iterator>
     struct _iterator_traits<Iterator, true> {
-        typedef typename Iterator::iterator_category iterator_category;
-        typedef typename Iterator::value_type value_type;
-        typedef typename Iterator::difference_type difference_type;
-        typedef typename Iterator::pointer pointer;
-        typedef typename Iterator::reference reference;
+        using iterator_category = typename Iterator::iterator_category;
+        using value_type = typename Iterator::value_type;
+        using difference_type = typename Iterator::difference_type;
+        using pointer = typename Iterator::pointer;
+        using reference = typename Iterator::reference;
     };
 
     template<typename Iterator>
@@ -58,21 +58,21 @@ namespace mystl {
     // 指针特化
     template<typename T>
     struct iterator_traits<T *> {
-        typedef random_access_iterator_tag iterator_category;
-        typedef T value_type;
-        typedef std::ptrdiff_t difference_type;
-        typedef T *pointer;
-        typedef T &reference;
+        using iterator_category = random_access_iterator_tag;;
+        using value_type = T;
+        using difference_type = std::ptrdiff_t;
+        using pointer = T *;
+        using reference = T &;
     };
 
     // const 指针特化
     template<typename T>
     struct iterator_traits<const T *> {
-        typedef random_access_iterator_tag iterator_category;
-        typedef T value_type;
-        typedef std::ptrdiff_t difference_type;
-        typedef const T *pointer;
-        typedef const T &reference;
+        using iterator_category = random_access_iterator_tag;
+        using value_type = T;
+        using difference_type = std::ptrdiff_t;
+        using pointer = const T *;
+        using reference = const T &;
     };
 
     // 是否输入迭代器
@@ -86,15 +86,15 @@ namespace mystl {
     protected:
         // 可能是迭代器或者指针类型
         Iterator _data;
-        typedef iterator_traits<Iterator> traits_type;
+        using traits_type = iterator_traits<Iterator>;
 
     public:
-        typedef Iterator iterator_type;
-        typedef typename traits_type::iterator_category iterator_category;
-        typedef typename traits_type::value_type value_type;
-        typedef typename traits_type::difference_type difference_type;
-        typedef typename traits_type::reference reference;
-        typedef typename traits_type::pointer pointer;
+        using iterator_type = Iterator;
+        using iterator_category = typename traits_type::iterator_category;
+        using value_type = typename traits_type::value_type;
+        using difference_type = typename traits_type::difference_type;
+        using reference = typename traits_type::reference;
+        using pointer = typename traits_type::pointer;
 
         normal_iterator() : _data(nullptr) {}
 
@@ -204,13 +204,13 @@ namespace mystl {
     protected:
         Iterator current;
 
-        typedef iterator_traits<Iterator> traits_type;
+        using traits_type = iterator_traits<Iterator>;
 
     public:
-        typedef Iterator iterator_type;
-        typedef typename traits_type::difference_type difference_type;
-        typedef typename traits_type::pointer pointer;
-        typedef typename traits_type::reference reference;
+        using iterator_type = Iterator;
+        using difference_type = typename traits_type::difference_type;
+        using pointer = typename traits_type::pointer;
+        using reference = typename traits_type::reference;
 
         // 默认构造
         reverse_iterator() : current() {}

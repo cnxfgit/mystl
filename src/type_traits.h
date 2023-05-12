@@ -17,12 +17,12 @@ namespace mystl {
 
     template<typename T>
     struct remove_reference<T &> {
-        typedef T type;
+        using type = T;
     };
 
     template<typename T>
     struct remove_reference<T &&> {
-        typedef T type;
+        using type = T;
     };
 
     // remove_reference type直接类型
@@ -37,7 +37,7 @@ namespace mystl {
 
     template<typename T>
     struct enable_if<true, T> {
-        typedef T type;
+        using type = T;
     };
 
     template<bool B, typename T = void>

@@ -12,12 +12,12 @@ namespace mystl {
     template<typename T>
     class allocator {
     public:
-        typedef T value_type;
-        typedef size_t size_type;
-        typedef T *pointer;
-        typedef const T *const_pointer;
-        typedef T &reference;
-        typedef const T &const_reference;
+        using value_type = T;
+        using size_type = size_t;
+        using pointer = T *;
+        using const_pointer = const T *;
+        using reference = T &;
+        using const_reference = const T &;
 
         // 重绑定一个真实分配类型U
         template<typename U>
@@ -65,8 +65,7 @@ namespace mystl {
         }
 
         // 同上 size 没啥作用 传啥都一样
-        void deallocate(pointer p, size_type)
-        {
+        void deallocate(pointer p, size_type) {
             ::operator delete(p);
         }
     };
@@ -86,16 +85,15 @@ namespace mystl {
     public:
         template<typename U>
         struct rebind {
-            typedef allocator<U> other;
+            using other = allocator<U>;
         };
     };
-
 
 
     template<typename InputIterator, typename ForwardIterator>
     inline ForwardIterator uninitialized_copy(InputIterator first, InputIterator last, ForwardIterator result) {
         while (first != last) {
-            new (static_cast<void*>(&*result)) typename ForwardIterator::value_type(*first);
+            new(static_cast<void *>(&*result)) typename ForwardIterator::value_type(*first);
             ++result;
             ++first;
         }

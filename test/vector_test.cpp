@@ -550,10 +550,42 @@ TEST_CASE("vector at()") {
     std::vector<int> v = {1, 2, 3};
     mystl::vector<int> mv = {1, 2, 3};
 
+    bool b1 = false, b2 = false;
+    try {
+        v.at(3);
+    } catch (std::out_of_range &e) {
+        b1 = true;
+    }
     try {
         mv.at(3);
-    } catch (mystl::out_of_range& e) {
-        std::cout << e.what() << std::endl;
+    } catch (mystl::out_of_range &e) {
+        b2 = true;
     }
+    CHECK_EQ(b1, b2);
 
+    bool b3 = false, b4 = false;
+    try {
+        v.at(1);
+    } catch (std::out_of_range &e) {
+        b3 = true;
+    }
+    try {
+        mv.at(1);
+    } catch (mystl::out_of_range &e) {
+        b4 = true;
+    }
+    CHECK_EQ(b3, b4);
+
+}
+
+TEST_CASE("vector front") {
+    std::vector<int> v = {1, 2, 3};
+    mystl::vector<int> mv = {1, 2, 3};
+
+    CHECK_EQ(v.front(), mv.front());
+
+    const std::vector<int> v1 = {0};
+    const mystl::vector<int> mv1 = {0};
+
+    CHECK_EQ(v1.front(), mv1.front());
 }
