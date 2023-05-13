@@ -143,8 +143,9 @@ namespace mystl {
 
         template<typename Iterator, typename = RequireInputIter<Iterator>>
         vector(Iterator first, Iterator last, const allocator_type &a = allocator_type()) {
-            _capacity = last - first;
-            _size = _capacity;
+            size_type size = last - first;
+            _capacity = size > 8 ? size : DEFAULT_SIZE;
+            _size = size;
             _data = _alloc.allocate(_capacity);
 
             pointer iter = _data;
@@ -258,6 +259,22 @@ namespace mystl {
 
         const_reference front() const {
             return *begin();
+        }
+
+        reference back() {
+            return *(end() - 1);
+        }
+
+        const_reference back() const {
+            return *(end() - 1);
+        }
+
+        pointer data() {
+            return _data;
+        }
+
+        const_pointer data() const {
+            return _data;
         }
 
         size_type capacity() const noexcept {
@@ -378,6 +395,46 @@ namespace mystl {
 
         void push_back(value_type &&x) {
             emplace_back(move(x));
+        }
+
+        void pop_back() {
+            _alloc.destroy(_data + _size - 1);
+            _size--;
+        }
+
+        template<typename InputIterator, typename = RequireInputIter<InputIterator>>
+        void assign(InputIterator first, InputIterator last) {
+            size_type len = last - first;
+            if (len < _size) {
+                _clear(begin(), end());
+                copy(first, last, begin());
+                _size = len;
+            } else {
+                InputIterator mid = first + _size;
+                copy(first, mid, begin());
+                for (; mid != last; ++mid) {
+                    push_back(*mid);
+                }
+            }
+        }
+
+        void assign(size_type n, const value_type &value) {
+            vector tmp(n, value);
+            this->swap(tmp);
+        }
+
+        void assign(std::initializer_list<T> list) {
+            vector tmp(list);
+            this->swap(tmp);
+        }
+
+        template<typename... Args>
+        iterator emplace(Args &&...args) {
+
+        }
+
+        iterator insert(const_iterator position, const value_type &value) {
+            return begin();
         }
 
 

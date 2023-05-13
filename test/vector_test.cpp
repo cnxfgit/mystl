@@ -578,7 +578,7 @@ TEST_CASE("vector at()") {
 
 }
 
-TEST_CASE("vector front") {
+TEST_CASE("vector front()") {
     std::vector<int> v = {1, 2, 3};
     mystl::vector<int> mv = {1, 2, 3};
 
@@ -588,4 +588,89 @@ TEST_CASE("vector front") {
     const mystl::vector<int> mv1 = {0};
 
     CHECK_EQ(v1.front(), mv1.front());
+}
+
+TEST_CASE("vector back()") {
+    std::vector<int> v = {1, 2, 3};
+    mystl::vector<int> mv = {1, 2, 3};
+
+    CHECK_EQ(v.back(), mv.back());
+
+    const std::vector<int> v1 = {0};
+    const mystl::vector<int> mv1 = {0};
+
+    CHECK_EQ(v1.back(), mv1.back());
+}
+
+
+TEST_CASE("vector data()") {
+    std::vector<int> v = {1, 2, 3};
+    mystl::vector<int> mv = {1, 2, 3};
+
+    CHECK_EQ(*(v.data()), *(mv.data()));
+
+    const std::vector<int> v1 = {0};
+    const mystl::vector<int> mv1 = {0};
+
+    CHECK_EQ(*(v1.data()), *(mv1.data()));
+}
+
+TEST_CASE("vector assign()") {
+    std::vector<int> v = {1, 2, 3};
+    mystl::vector<int> mv = {1, 2, 3};
+
+    std::vector<int> new_v = {4, 5, 6};
+    mystl::vector<int> new_mv = {4, 5, 6};
+
+    v.assign(new_v.begin(), new_v.end());
+    mv.assign(new_mv.begin(), new_mv.end());
+    CHECK(vector_eq(v, mv));
+
+    v.assign(10, 666);
+    mv.assign(10, 666);
+    CHECK(vector_eq(v, mv));
+
+    v.assign(new_v.begin(), new_v.end());
+    mv.assign(new_mv.begin(), new_mv.end());
+    CHECK(vector_eq(v, mv));
+
+    v.assign({7, 8, 9, 10});
+    mv.assign({7, 8, 9, 10});
+    CHECK(vector_eq(v, mv));
+}
+
+TEST_CASE("vector pop_back()") {
+    std::vector<int> v = {1, 2, 3};
+    mystl::vector<int> mv = {1, 2, 3};
+    CHECK(vector_eq(v, mv));
+
+    v.pop_back();
+    mv.pop_back();
+    CHECK(vector_eq(v, mv));
+
+    v.pop_back();
+    mv.pop_back();
+    CHECK(vector_eq(v, mv));
+
+    std::vector<Ptr> v1 = {Ptr(1)};
+    mystl::vector<Ptr> mv1 = {Ptr(1)};
+    CHECK(vector_eq(v1, mv1));
+    v1.back();
+    mv1.back();
+    CHECK(vector_eq(v1, mv1));
+}
+
+TEST_CASE("vector emplace()") {
+    std::vector<int> v = {1, 2, 3};
+    mystl::vector<int> mv = {1, 2, 3};
+
+
+}
+
+TEST_CASE("vector insert()") {
+    std::vector<int> v = {1, 2, 3};
+    mystl::vector<int> mv = {1, 2, 3};
+
+    v.insert(v.end(), 6);
+
 }

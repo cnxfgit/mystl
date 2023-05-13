@@ -11,7 +11,7 @@ include_directories(${PROJECT_SOURCE_DIR}/src)
 
 file(GLOB SOURCE_FILES "test/*.cpp")
 
-add_executable(test ${SOURCE_FILES} src/stdexcept.h src/exception.h)
+add_executable(test ${SOURCE_FILES} )
 
 target_link_libraries(test PRIVATE doctest)
 
