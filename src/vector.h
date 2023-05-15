@@ -10,6 +10,7 @@
 #include "iterator.h"
 #include "memory.h"
 #include "exception.h"
+#include <memory>
 
 namespace mystl {
 
@@ -51,7 +52,9 @@ namespace mystl {
                 if (n > _capacity) {
                     _expansion();
                 }
-                for (int i = 0; i < n - _size; ++i) {
+                // size会增长 所以要临时存起来
+                size_type push_num = n - _size;
+                for (int i = 0; i < push_num; ++i) {
                     if (B) {
                         push_back(value);
                     } else {
@@ -429,11 +432,21 @@ namespace mystl {
         }
 
         template<typename... Args>
-        iterator emplace(Args &&...args) {
-
+        iterator emplace(iterator position, Args &&...args) {
+            size_type index = position - begin();
+            if (_capacity == _size) {
+                _expansion();
+            }
+            iterator current = iterator(_data + index);
+            for (iterator iter = end(); iter != current; --iter) {
+                copy(iter-1, iter, iter);
+            }
+            _alloc.construct(current.base(), forward<Args>(args)...);
+            ++_size;
+            return current;
         }
 
-        iterator insert(const_iterator position, const value_type &value) {
+        iterator insert(iterator position, const value_type &value) {
             return begin();
         }
 

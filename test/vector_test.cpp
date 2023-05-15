@@ -383,7 +383,20 @@ TEST_CASE("vector resize()") {
 
     v.resize(10);
     mv.resize(10);
+    for (int i = 0; i < 10; ++i) {
+        std::cout << v[i] << std::endl;
+        std::cout << mv[i] << std::endl;
+    }
     CHECK(vector_eq(v, mv));
+
+    v.resize(15, 55);
+    mv.resize(15, 55);
+    CHECK(vector_eq(v, mv));
+
+    for (int i = 0; i < 15; ++i) {
+        std::cout << v[i] << std::endl;
+        std::cout << mv[i] << std::endl;
+    }
 }
 
 TEST_CASE("vector reserve()") {
@@ -664,7 +677,17 @@ TEST_CASE("vector emplace()") {
     std::vector<int> v = {1, 2, 3};
     mystl::vector<int> mv = {1, 2, 3};
 
+    auto v_iter = v.emplace(v.begin(), 4);
+    auto mv_iter = mv.emplace(mv.begin(), 4);
+    CHECK(vector_eq(v, mv));
 
+    v.emplace(v_iter, 200);
+    mv.emplace(mv_iter, 200);
+    CHECK(vector_eq(v, mv));
+
+    v.emplace(v.end(), 300);
+    mv.emplace(mv.end(), 300);
+    CHECK(vector_eq(v, mv));
 }
 
 TEST_CASE("vector insert()") {
