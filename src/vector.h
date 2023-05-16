@@ -439,7 +439,7 @@ namespace mystl {
             }
             iterator current = iterator(_data + index);
             for (iterator iter = end(); iter != current; --iter) {
-                copy(iter-1, iter, iter);
+                copy(iter - 1, iter, iter);
             }
             _alloc.construct(current.base(), forward<Args>(args)...);
             ++_size;
@@ -447,7 +447,30 @@ namespace mystl {
         }
 
         iterator insert(iterator position, const value_type &value) {
-            return begin();
+            return emplace(position, value);
+        }
+
+        void insert(iterator position, size_type n, const value_type &value) {
+            for (int i = 0; i < n; ++i) {
+                position = emplace(position, value);
+            }
+        }
+
+        template<typename InputIterator, typename = RequireInputIter<InputIterator>>
+        void insert(iterator position, InputIterator first, InputIterator last) {
+            vector tmp(first, last);
+            auto tl = tmp.rend();
+            for (auto tf = tmp.rbegin(); tf != tl; ++tf) {
+                position = emplace(position, *tf);
+            }
+        }
+
+        iterator insert(iterator position, const value_type &&value) {
+            return emplace(position, move(value));
+        }
+
+        void insert(iterator position, std::initializer_list<value_type> list) {
+            insert(position, list.begin(), list.end());
         }
 
 

@@ -8,6 +8,21 @@
 #include <iostream>
 #include "utility.h"
 
+template<typename T>
+void printVec(const std::vector<T> &vec) {
+    for (const T &i:vec) {
+        std::cout << i << std::endl;
+    }
+}
+
+template<typename T>
+void printVec(const mystl::vector<T> &vec) {
+    for (const T &i:vec) {
+        std::cout << i << std::endl;
+    }
+}
+
+
 class Ref {
 public:
     bool copyFlag;
@@ -694,6 +709,43 @@ TEST_CASE("vector insert()") {
     std::vector<int> v = {1, 2, 3};
     mystl::vector<int> mv = {1, 2, 3};
 
-    v.insert(v.end(), 6);
+    auto vr1 = v.insert(v.end(), 6);
+    auto mvr1 = mv.insert(mv.end(), 6);
+    CHECK_EQ(*vr1, *mvr1);
+    CHECK(vector_eq(v, mv));
 
+    auto v_iter = v.insert(v.begin(), 4);
+    auto mv_iter = mv.insert(mv.begin(), 4);
+    CHECK_EQ(*v_iter, *mv_iter);
+    CHECK(vector_eq(v, mv));
+
+    auto vr2 = v.insert(v_iter, 200);
+    auto mvr2 = mv.insert(mv_iter, 200);
+    CHECK_EQ(*vr2, *mvr2);
+    CHECK(vector_eq(v, mv));
+
+    v.insert(v.begin(), 3, 333);
+    mv.insert(mv.begin(), 3, 333);
+    CHECK(vector_eq(v, mv));
+
+    v.insert(v.end(), 6, 666);
+    mv.insert(mv.end(), 6, 666);
+    CHECK(vector_eq(v, mv));
+
+    v.insert(v.begin(), v.begin(), v.begin() + 2);
+    mv.insert(mv.begin(), mv.begin(), mv.begin() + 2);
+    CHECK(vector_eq(v, mv));
+
+    v.insert(v.begin(), v.begin(), v.begin() + 2);
+    mv.insert(mv.begin(), mv.begin(), mv.begin() + 2);
+    CHECK(vector_eq(v, mv));
+
+    auto vr3 = v.insert(v.begin(), 12);
+    auto mvr3 = mv.insert(mv.begin(), 12);
+    CHECK_EQ(*vr3, *mvr3);
+    CHECK(vector_eq(v, mv));
+
+    v.insert(v.end(), {9, 8, 7});
+    mv.insert(mv.end(), {9, 8, 7});
+    CHECK(vector_eq(v, mv));
 }
