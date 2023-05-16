@@ -326,6 +326,41 @@ namespace mystl {
     };
 
 
+    template<typename Container>
+    inline auto
+    begin(Container &container) -> decltype(container.begin()) {
+        return container.begin();
+    }
+
+    template<typename Container>
+    inline auto
+    begin(const Container &container) -> decltype(container.begin()) {
+        return container.begin();
+    }
+
+
+    template<typename Container>
+    inline auto end(Container &container) -> decltype(container.end()) {
+        return container.end();
+    }
+
+
+    template<typename Container>
+    inline auto end(const Container &container) -> decltype(container.end()) {
+        return container.end();
+    }
+
+
+    template<typename T, size_t N>
+    inline T *begin(T (&array)[N]) {
+        return array;
+    }
+
+    template<typename T, size_t N>
+    inline T *end(T (&array)[N]) {
+        return array + N;
+    }
+
 }
 
 #endif //MYSTL_ITERATOR_H

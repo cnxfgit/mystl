@@ -768,4 +768,6 @@ TEST_CASE("vector erase()") {
     auto mvi2 = mv.erase(mv.begin());
     CHECK_EQ(*vi2, *mvi2);
     CHECK(vector_eq(v, mv));
+
+    std::begin(v);
 }
