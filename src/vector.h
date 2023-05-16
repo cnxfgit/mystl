@@ -172,15 +172,15 @@ namespace mystl {
                     vector temp = vector(v);
                     this->swap(temp);
                 } else if (this->size() > v.size()) {
-                    auto end = mystl::copy(v.cbegin(), v.cend(), this->begin());
+                    auto end = copy(v.cbegin(), v.cend(), this->begin());
                     this->_alloc = v._alloc;
                     for (auto i = end; i != this->end(); ++i) {
                         _alloc.destroy(i.base());
                     }
                     this->_size = v.size();
                 } else {
-                    mystl::copy(v.cbegin(), v.cbegin() + this->size(), this->begin());
-                    mystl::uninitialized_copy(v.cbegin() + this->size(), v.cend(), this->end());
+                    copy(v.cbegin(), v.cbegin() + this->size(), this->begin());
+                    uninitialized_copy(v.cbegin() + this->size(), v.cend(), this->end());
                 }
             }
             return *this;
@@ -473,6 +473,19 @@ namespace mystl {
             insert(position, list.begin(), list.end());
         }
 
+        iterator erase(iterator first, iterator last) {
+            for (auto iter = first; iter != last; ++iter) {
+                _alloc.destroy(iter.base());
+            }
+            copy(last, end(), first);
+            // 这个要放在copy后面， 不然改变end() 语义了
+            _size = _size - (last - first);
+            return first;
+        }
+
+        iterator erase(iterator position) {
+            return erase(position, position + 1);
+        }
 
         template<class Ty, class Alloc>
         friend void swap(vector<Ty, Alloc> &x, vector<Ty, Alloc> &y);

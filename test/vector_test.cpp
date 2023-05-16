@@ -749,3 +749,23 @@ TEST_CASE("vector insert()") {
     mv.insert(mv.end(), {9, 8, 7});
     CHECK(vector_eq(v, mv));
 }
+
+TEST_CASE("vector erase()") {
+    std::vector<int> v = {1, 2, 3, 4, 5};
+    mystl::vector<int> mv = {1, 2, 3, 4, 5};
+
+    auto vi = v.erase(v.begin());
+    auto mvi = mv.erase(mv.begin());
+    CHECK_EQ(*vi, *mvi);
+    CHECK(vector_eq(v, mv));
+
+    auto vi1 = v.erase(v.begin(), v.begin() + 1);
+    auto mvi1 = mv.erase(mv.begin(), mv.begin() + 1);
+    CHECK_EQ(*vi1, *mvi1);
+    CHECK(vector_eq(v, mv));
+
+    auto vi2 = v.erase(v.begin());
+    auto mvi2 = mv.erase(mv.begin());
+    CHECK_EQ(*vi2, *mvi2);
+    CHECK(vector_eq(v, mv));
+}
