@@ -15,7 +15,8 @@ namespace mystl {
     class list_node {
     public:
         T _data;
-
+        list_node *_prev;
+        list_node *_next;
     };
 
     template<typename T>
@@ -46,7 +47,33 @@ namespace mystl {
         }
 
         Self &operator++() {
+            _node = _node->_next;
             return *this;
+        }
+
+        Self operator++(int) {
+            Self tmp = *this;
+            _node = _node->_next;
+            return tmp;
+        }
+
+        Self &operator--() {
+            _node = _node->_prev;
+            return *this;
+        }
+
+        Self operator--(int) {
+            Self tmp = *this;
+            _node = _node->_prev;
+            return tmp;
+        }
+
+        bool operator==(const Self &x) const {
+            return _node == x._node;
+        }
+
+        bool operator!=(const Self &x) const {
+            return _node != x._M_node;
         }
 
     };
@@ -65,7 +92,63 @@ namespace mystl {
 
     private:
         const Node *_node;
+
+    public:
+
+        const_list_iterator() : _node(nullptr) {}
+
+        explicit const_list_iterator(const Node *node) : _node(node) {}
+
+        explicit const_list_iterator(const list_iterator<T> &x) : _node(x._node) {}
+
+        reference operator*() const {
+            return _node->_data;
+        }
+
+        pointer operator->() const {
+            return &(_node->_M_data);
+        }
+
+        Self &operator++() {
+            _node = _node->_next;
+            return *this;
+        }
+
+        Self operator++(int) {
+            Self tmp = *this;
+            _node = _node->_next;
+            return tmp;
+        }
+
+        Self &operator--() {
+            _node = _node->_prev;
+            return *this;
+        }
+
+        Self
+        operator--(int) {
+            Self tmp = *this;
+            _node = _node->_prev;
+            return tmp;
+        }
+
+        bool operator==(const Self &x) const { return _node == x._node; }
+
+        bool operator!=(const Self &x) const { return _node != x._node; }
     };
+
+    template<typename Val>
+    inline bool
+    operator==(const list_iterator<Val> &x, const const_list_iterator<Val> &y) {
+        return x._node == y._node;
+    }
+
+    template<typename Val>
+    inline bool
+    operator!=(const list_iterator<Val> &x, const const_list_iterator<Val> &y) {
+        return x._node != y._node;
+    }
+
 
     template<typename T, typename A = allocator<T>>
     class list {
@@ -81,15 +164,45 @@ namespace mystl {
         using iterator = list_iterator<T>;
         using const_iterator = const_list_iterator<T>;
 
+        using node_allocator_type = typename A::template rebind<list_node<T>>::
+        other;
+
     private:
         list_node<T> *_head;
         list_node<T> *_tail;
         size_type _size;
+        allocator_type _alloc;
+        node_allocator_type _node_alloc;
 
     public:
 
         list() : _head(nullptr), _tail(nullptr), _size(0) {}
 
+        explicit list(const allocator_type &alloc) : _head(nullptr),
+                                                     _tail(nullptr), _size(0), _alloc(alloc) {
+            typename allocator_type::template rebind<list_node<T>>
+                    node_alloc;
+            _node_alloc = node_alloc;
+        }
+
+        explicit list(size_type n) : _size(n) {
+            list_node<T> *prev = nullptr;
+            for (int i = 0; i < n; ++i) {
+                list_node<T> *node = _node_alloc.allocate(1);
+                node->_data = T();
+                if (i == 0) {
+                    _head = node;
+                }
+                if (prev != nullptr) {
+                    prev->_next = node;
+                    node->_prev = prev;
+                }
+                prev = node;
+            }
+            if (prev != nullptr) {
+                _tail = prev;
+            }
+        }
 
         size_type max_size() const noexcept {
             return 0;
@@ -104,11 +217,11 @@ namespace mystl {
         }
 
         iterator begin() noexcept {
-            return iterator();
+            return iterator(_head);
         }
 
         const_iterator begin() const noexcept {
-            return iterator();
+            return const_iterator(_head);
         }
 
 
